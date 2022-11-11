@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,9 +13,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.alessandro.app1.model.Produto;
+import com.alessandro.app1.repository.ProdutoRepository;
 
 @Controller
 public class ProdutoController {
+	
+	@Autowired
+	private ProdutoRepository repository;
 	
 	private static List<Produto> listaProdutos = new ArrayList<Produto>();
 
@@ -28,7 +33,8 @@ public class ProdutoController {
 	@GetMapping("/produto/list")
 	public String list(Model model) {
 		
-		model.addAttribute("produtos", listaProdutos);
+		//model.addAttribute("produtos", listaProdutos);
+		model.addAttribute("produtos", repository.findAll());
 		
 		return "lista-produtos";
 	}
@@ -38,7 +44,8 @@ public class ProdutoController {
 			@PathVariable("id") int id,
 			Model model) {
 		
-		Produto p = buscarProdutoPeloId(id);
+		//Produto p = buscarProdutoPeloId(id);
+		Produto p = repository.findById(id);
 	
 		if (p == null) {
 			return "produto-nao-encontrado";
@@ -71,14 +78,16 @@ public class ProdutoController {
 		ModelAndView mv = 
 				new ModelAndView("redirect:/produto/list");
 	
-		if (prod.getId() == 0) {
+		if (prod.getId() == null) {
 			
-			prod.setId(next++);
-			listaProdutos.add(prod);
+			//prod.setId(next++);
+			//listaProdutos.add(prod);
+			repository.save(prod);
 			
 		} else {
 			
-			updateProduto(prod);
+			//updateProduto(prod);
+			repository.save(prod);
 		}
 		
 		return mv;
@@ -99,7 +108,8 @@ public class ProdutoController {
 	public String edit(
 			@PathVariable("id") int id, Model model) {
 		
-		Produto p = buscarProdutoPeloId(id);
+		//Produto p = buscarProdutoPeloId(id);
+		Produto p = repository.findById(id);
 		
 		if (p == null) {
 			return "produto-nao-encontrado";
