@@ -1,9 +1,5 @@
 package com.alessandro.app1.controller;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ListIterator;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,15 +16,6 @@ public class ProdutoController {
 	
 	@Autowired
 	private ProdutoRepository repository;
-	
-	private static List<Produto> listaProdutos = new ArrayList<Produto>();
-
-	private static int next = 1;
-	
-	static {
-		listaProdutos.add(new Produto(next++, "Pão", "Pão Francês", 2.56));
-		listaProdutos.add(new Produto(next++, "Sabão", "Sabão glicerinado", 3.56));
-	}
 	
 	@GetMapping("/produto/list")
 	public String list(Model model) {
@@ -56,16 +43,6 @@ public class ProdutoController {
 		return "detalhe-produto";
 	}
 
-	private Produto buscarProdutoPeloId(int id) {
-		for (Produto p : listaProdutos) {
-			if (p.getId() == id) {
-				return p;
-			}
-		}
-		return null;
-	}
-
-
 	@GetMapping("/produto/novo")
 	public String novo(Model model) {
 		model.addAttribute("produto", new Produto());
@@ -92,17 +69,6 @@ public class ProdutoController {
 		
 		return mv;
 	}
-
-	private void updateProduto(Produto prod) {
-		ListIterator<Produto> i = listaProdutos.listIterator();
-		while(i.hasNext()) {
-			Produto atual = i.next(); 
-			if (atual.getId() == prod.getId()) {
-				i.set(prod);
-			}
-		}
-	}
-
 	
 	@GetMapping("/produto/{id}/edit")
 	public String edit(
